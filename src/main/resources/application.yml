@@ -1,0 +1,43 @@
+# ServerProperties
+server:
+  port: 8080
+  servlet:
+    context-path: /community
+
+# ThymeleafProperties
+spring:
+  thymeleaf:
+    cache: false
+
+  # DataSourceProperties
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/community?useSSL=false&characterEncoding=utf-8&allowPublicKeyRetrieval=true&serverTimezone=UTC
+    username: root
+    password: m04jz17
+    # 连接池类型
+    type: com.zaxxer.hikari.HikariDataSource
+    hikari:
+      maximum-pool-size: 15 # 最大连接数
+      minimum-idle: 5 # 最小空闲连接
+      idle-timeout: 30000 # 超时时间
+
+  # MyBatisProperties
+mybatis:
+  # 映射文件的存放位置
+  mapper-locations: classpath:mapper/*.xml
+  # 实体类所在包
+  type-aliases-package: com.nowcoder.community.entity
+  configuration:
+    # 启用自增长主键
+    useGeneratedKeys: true
+    # 开启驼峰uName自动映射到u_name
+    map-underscore-to-camel-case: true
+
+# logger 打印 sql,方便调试
+#logging:
+#  level:
+#    com.nowcoder.community: debug
+#  # 日志存放目录
+#  file:
+#    path: D:/note/nowcoder/community
