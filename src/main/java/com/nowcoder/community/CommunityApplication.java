@@ -11,3 +11,6 @@ public class CommunityApplication {
     }
 
 }
+// SMTP:QLFGACHISAJKKQTA
+// 随机头像库：http://images.nowcoder.com/head/1t.png
+// xt.png x：数字 0-1000

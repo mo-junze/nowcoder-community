@@ -4,10 +4,19 @@ server:
   servlet:
     context-path: /community
 
-# ThymeleafProperties
 spring:
+  # ThymeleafProperties
   thymeleaf:
     cache: false
+
+  # MailProperties
+  mail:
+    host: smtp.163.com  # 发送邮件的服务器地址
+    port: 465 # 端口号，一般是 465或 994
+    username: junzemo@163.com # 网易邮箱
+    password: QLFGACHISAJKKQTA  # 客户端授权码
+    protocol: smtp  # 发送邮件协议
+    properties.mail.smtp.ssl.enable: true #开启SSL
 
   # DataSourceProperties
   datasource:
@@ -34,6 +43,10 @@ mybatis:
     # 开启驼峰uName自动映射到u_name
     map-underscore-to-camel-case: true
 
+# community:配置激活链接
+community:
+  path:
+    domain: http://localhost:8080
 # logger 打印 sql,方便调试
 #logging:
 #  level:

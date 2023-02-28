@@ -102,7 +102,7 @@
             <level>debug</level>
         </filter>
         <encoder>
-            <Pattern>%d %level [%thread] %logger{10}  [%file:%line] %msg%n</Pattern>
+            <Pattern>%d %highlight(%level) [%thread] %boldMagenta(%logger{10})  [%file:%line] %cyan(%msg%n)</Pattern>
             <!-- 设置字符集 -->
             <charset>UTF-8</charset>
         </encoder>

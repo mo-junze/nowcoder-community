@@ -11,12 +11,12 @@ public class User {
     private int id;
     private String username;
     private String password;
-    private String salt;
+    private String salt; // 5位随机数，密码加密时用到
     private String email;
-    private int type;
-    private int status;
-    private String activationCode;
-    private String headerUrl;
+    private int type;   // 账号类型，0：普通用户，1：超级管理员，2：版主
+    private int status; // 状态码，0：未激活；1：已激活
+    private String activationCode;  // 激活码
+    private String headerUrl;   // 头像地址
     private Date createTime;
 
     public int getId() {
