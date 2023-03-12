@@ -47,6 +47,7 @@ mybatis:
 community:
   path:
     domain: http://localhost:8080
+    upload: d:/notebook/仿牛客网社区开发-所有素材和源码/upload
 # logger 打印 sql,方便调试
 #logging:
 #  level:

@@ -1,5 +1,6 @@
 package com.nowcoder.community;
 
+import com.nowcoder.community.util.CommunityUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -29,5 +30,11 @@ public class LoggerTests {
         logger.info("info log");
         logger.warn("warn log");
         logger.error("error log");
+    }
+
+    @Test
+    public void testMd5() {
+        String password = CommunityUtil.md5("321" + "90196");
+        System.out.println(password);
     }
 }

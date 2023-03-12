@@ -1,6 +1,8 @@
 package com.nowcoder.community.service;
 
+import com.nowcoder.community.dao.LoginTicketMapper;
 import com.nowcoder.community.dao.UserMapper;
+import com.nowcoder.community.entity.LoginTicket;
 import com.nowcoder.community.entity.User;
 import com.nowcoder.community.util.CommunityConstant;
 import com.nowcoder.community.util.CommunityUtil;
@@ -45,12 +47,16 @@ public class UserService implements CommunityConstant {
     @Value("${server.servlet.context-path}")
     private String contextPath;
 
+    @Autowired
+    private LoginTicketMapper loginTicketMapper;
+
     public User findUserById(int id) {
         return userMapper.selectById(id);
     }
 
     /**
      * 注册账户
+     *
      * @param user
      * @return 成功返回空 map 失败返回错误信息 map
      */
@@ -117,6 +123,7 @@ public class UserService implements CommunityConstant {
 
     /**
      * 激活账户
+     *
      * @param userId
      * @param code
      * @return
@@ -126,13 +133,80 @@ public class UserService implements CommunityConstant {
 
         if (user.getStatus() == 1) {    // 重复激活
             return ACTIVATION_REPEAT;
-        }
-        else if (user.getActivationCode().equals(code)) {   // 激活成功
+        } else if (user.getActivationCode().equals(code)) {   // 激活成功
             userMapper.updateStatus(userId, 1);
             return ACTIVATION_SUCCESS;
-        }
-        else {
+        } else {
             return ACTIVATION_FAILURE;  // 激活失败
         }
+    }
+
+    /**
+     * 登录成功返回登录凭证(map封装)，登录失败返回错误信息 map封装（失败原因多种，所以用 map）
+     *
+     * @param username
+     * @param password
+     * @param expiredSeconds 终止时间（秒）
+     * @return
+     */
+    public Map<String, Object> login(String username, String password, long expiredSeconds) {
+        Map<String, Object> map = new HashMap<>();
+
+        // 对参数进行空值处理
+        if (StringUtils.isBlank(username)) {
+            map.put("usernameMsg", "账号不能为空!");
+            return map;
+        }
+        if (StringUtils.isBlank(password)) {
+            map.put("passwordMsg", "密码不能为空!");
+            return map;
+        }
+
+        // 验证账号
+        User user = userMapper.selectByName(username);
+        if (user == null) {
+            map.put("usernameMsg", "账号不存在!");
+            return map;
+        }
+
+        // 验证状态
+        if (user.getStatus() == 0) {
+            map.put("usernameMsg", "该账号未激活!");
+            return map;
+        }
+
+        // 验证密码 - 先加密，再与数据库中的密码比较
+        password = CommunityUtil.md5(password + user.getSalt());
+        if (!user.getPassword().equals(password)) {
+            map.put("passwordMsg", "密码不正确!");
+            return map;
+        }
+
+        // 生成登陆凭证
+        LoginTicket loginTicket = new LoginTicket();
+        loginTicket.setUserId(user.getId());
+        loginTicket.setTicket(CommunityUtil.generateUUID());
+        loginTicket.setStatus(0);
+        loginTicket.setExpired(new Date(System.currentTimeMillis() + expiredSeconds * 1000)); // 当前时间（毫秒） + 有效时长（毫秒）
+        loginTicketMapper.insertLoginTicket(loginTicket);
+
+        map.put("ticket", loginTicket.getTicket());
+        return map;
+    }
+
+    public void logout(String ticket) {
+        loginTicketMapper.updateStatus(ticket, 1);
+    }
+
+    public LoginTicket findLoginTicket(String ticket) {
+        return loginTicketMapper.selectByTicket(ticket);
+    }
+
+    public int updateHeader(int userId, String headerUrl) {
+        return userMapper.updateHeader(userId, headerUrl);
+    }
+
+    public int updatePassword(int userId, String password) {
+        return userMapper.updatePassword(userId, password);
     }
 }
